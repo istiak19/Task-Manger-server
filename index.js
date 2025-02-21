@@ -6,7 +6,9 @@ const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
-app.use(cors())
+app.use(cors({
+    origin: ['http://localhost:5173', 'http://localhost:5174']
+}))
 app.use(express.json())
 
 const uri = process.env.DB_URL
@@ -63,27 +65,31 @@ async function run() {
         })
 
         app.put('/tasks/:id', async (req, res) => {
-            const task = req.body;
             const id = req.params.id;
+            const task = req.body;
+            if (!ObjectId.isValid(id)) {
+                return res.status(400).json({ error: "Invalid Task ID" });
+            }
+
             const filter = { _id: new ObjectId(id) };
-            const options = { upsert: true };
             const updateDoc = {
                 $set: {
                     title: task.title,
                     description: task.description
                 },
             };
-            const result = await taskCollection.updateOne(filter, updateDoc, options);
+            const result = await taskCollection.updateOne(filter, updateDoc);
             res.send(result);
         })
 
-        app.put('/tasks/move', async (req, res) => {
-            const { taskId, fromCategory, toCategory } = req.body;
-            if (!taskId || !fromCategory || !toCategory) {
+        app.put('/tasks/move/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateInfo = req.body;
+            if (!updateInfo.taskId || !updateInfo.fromCategory || !updateInfo.toCategory) {
                 return res.status(400).json({ message: "Invalid request. Missing required fields." });
             }
-            const query = { _id: new ObjectId(taskId) };
-            const update = { $set: { category: toCategory } };
+            const query = { _id: new ObjectId(id) };
+            const update = { $set: { category: updateInfo.toCategory } };
 
             const result = await taskCollection.updateOne(query, update);
 
