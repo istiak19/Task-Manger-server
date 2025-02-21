@@ -62,7 +62,7 @@ async function run() {
             res.send(result);
         })
 
-        app.put('/task/:id', async (req, res) => {
+        app.put('/tasks/:id', async (req, res) => {
             const task = req.body;
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) };
@@ -112,9 +112,9 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.send('Task Manager Server running!')
 })
 
 app.listen(port, () => {
-    console.log(`Task Manger listening on port ${port}`)
+    console.log(`Task Manager listening on port ${port}`)
 })
