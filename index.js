@@ -7,7 +7,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174']
+    origin: ['http://localhost:5173', 'http://localhost:5174','https://task-manger-cb5df.web.app']
 }))
 app.use(express.json())
 
